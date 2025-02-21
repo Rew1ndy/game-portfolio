@@ -1,38 +1,207 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  background-color: #171717;
+  font-family: "Poppins", sans-serif;
+  color: #f0f0f0;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  font-size: 18px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 90vw;
+  margin: auto;
+}
+
+.line {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.line::after {
+  content: '';
+  display: block;
+  position: absolute;
+  height: 15vh;
+  width: 100%;
+  top: -50%;
+  left: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #ffffff 75%, #ffffff 100%);
+  animation: drop 7s 0s infinite;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.4, 0.26, 0, 0.97);
+}
+
+.line:nth-child(1) {
+  margin-left: -25%;
+}
+
+.line:nth-child(1)::after {
+  animation-delay: 2s;
+}
+
+.line:nth-child(3) {
+  margin-left: 25%;
+}
+
+.line:nth-child(3)::after {
+  animation-delay: 2.5s;
+}
+
+@keyframes drop {
+  0% {
+    top: -50%;
+  }
+  100% {
+    top: 110%;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #222, #444);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: #ff9800;
+}
+
+.container {
+  text-align: center;
+  padding: 3rem;
+  max-width: 800px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+h1 {
+  font-size: 36px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ff9800, #ff5722);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff9800;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+p {
+  line-height: 1.8;
+  text-align: justify;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 8px;
+}
+
+ul li::before {
+  content: "▶";
+  position: absolute;
+  left: 0;
+  color: #ff9800;
+  font-size: 16px;
+}
+
+button {
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #ff5722, #ff9800);
+  transform: scale(1.05);
+}
+
+.slick-slider {
+  max-width: 800px;
+  margin: auto;
+}
+
+.slick-slide img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.app {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; 
+  padding-bottom: 60px;
+}
+
+.footer {
+  background-color: #222;
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  text-align: center;
+  padding: 1rem 0;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
 }

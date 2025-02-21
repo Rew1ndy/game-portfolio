@@ -1,0 +1,22 @@
+.about-container {
+    padding: 3rem;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .about-container h1,
+  .about-container h2 {
+    color: #ff9800;
+  }
+  
+  .about-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .about-container li {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
