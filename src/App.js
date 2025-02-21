@@ -1,37 +1,25 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Gallery from "./pages/Gallery";
-import News from "./pages/News";
-import Footer from "./components/Footer";
-import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./Home"; 
+import Gallery from "./Gallery"; 
+import About from "./About"; 
+import News from "./News"; 
+import Footer from "./Footer"; 
 
-function App() {
+const App = () => {
   return (
-    <Router>
+    <Router basename="/game-portfolio">
       <div className="app">
-        <div className="lines">
-          <div className="line"></div>
-          <div className="line"></div>
-          <div className="line"></div>
-        </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/news" element={<News />} />
+        </Routes>
 
-        <Navbar />
-
-        <div className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/news" element={<News />} />
-          </Routes>
-        </div>
- 
         <Footer />
       </div>
     </Router>
   );
-}
+};
 
 export default App;
