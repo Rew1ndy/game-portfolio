@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "//alexmegua.github.io/game-portfolio/static/css/main.2b9451cf.css",
-    "main.js": "//alexmegua.github.io/game-portfolio/static/js/main.df0d3731.js",
-    "static/js/453.ade82335.chunk.js": "//alexmegua.github.io/game-portfolio/static/js/453.ade82335.chunk.js",
-    "static/media/screenshot3.webp": "//alexmegua.github.io/game-portfolio/static/media/screenshot3.33e55e81057a0361d37a.webp",
-    "static/media/screenshot4.webp": "//alexmegua.github.io/game-portfolio/static/media/screenshot4.e55876b89c740185027b.webp",
-    "static/media/screenshot2.webp": "//alexmegua.github.io/game-portfolio/static/media/screenshot2.71e9367827c0f03f8b99.webp",
-    "static/media/screenshot1.jpg": "//alexmegua.github.io/game-portfolio/static/media/screenshot1.2a583b9ab0c0229a581a.jpg",
-    "static/media/slick.svg": "//alexmegua.github.io/game-portfolio/static/media/slick.2630a3e3eab21c607e21.svg",
-    "static/media/slick.eot": "//alexmegua.github.io/game-portfolio/static/media/slick.a4e97f5a2a64f0ab1323.eot",
-    "static/media/slick.ttf": "//alexmegua.github.io/game-portfolio/static/media/slick.c94f7671dcc99dce43e2.ttf",
-    "static/media/slick.woff": "//alexmegua.github.io/game-portfolio/static/media/slick.295183786cd8a1389865.woff",
-    "index.html": "//alexmegua.github.io/game-portfolio/index.html",
-    "main.2b9451cf.css.map": "//alexmegua.github.io/game-portfolio/static/css/main.2b9451cf.css.map",
-    "main.df0d3731.js.map": "//alexmegua.github.io/game-portfolio/static/js/main.df0d3731.js.map",
-    "453.ade82335.chunk.js.map": "//alexmegua.github.io/game-portfolio/static/js/453.ade82335.chunk.js.map"
+    "main.css": "/game-portfolio/static/css/main.0c0ba745.css",
+    "main.js": "/game-portfolio/static/js/main.c3133c26.js",
+    "static/js/453.ade82335.chunk.js": "/game-portfolio/static/js/453.ade82335.chunk.js",
+    "static/media/screenshot3.webp": "/game-portfolio/static/media/screenshot3.33e55e81057a0361d37a.webp",
+    "static/media/screenshot4.webp": "/game-portfolio/static/media/screenshot4.e55876b89c740185027b.webp",
+    "static/media/screenshot2.webp": "/game-portfolio/static/media/screenshot2.71e9367827c0f03f8b99.webp",
+    "static/media/screenshot1.jpg": "/game-portfolio/static/media/screenshot1.2a583b9ab0c0229a581a.jpg",
+    "static/media/slick.svg": "/game-portfolio/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/game-portfolio/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/game-portfolio/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/game-portfolio/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "/game-portfolio/index.html",
+    "main.0c0ba745.css.map": "/game-portfolio/static/css/main.0c0ba745.css.map",
+    "main.c3133c26.js.map": "/game-portfolio/static/js/main.c3133c26.js.map",
+    "453.ade82335.chunk.js.map": "/game-portfolio/static/js/453.ade82335.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2b9451cf.css",
-    "static/js/main.df0d3731.js"
+    "static/css/main.0c0ba745.css",
+    "static/js/main.c3133c26.js"
   ]
 }
