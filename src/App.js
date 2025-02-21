@@ -10,7 +10,7 @@ import "./App.css";
 function App() {
   return (
     <Router>
-      <div className="app">
+      <div className="app" basename="/game-portfolio">
         <div className="lines">
           <div className="line"></div>
           <div className="line"></div>
