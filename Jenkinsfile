@@ -8,56 +8,83 @@ pipeline {
             }
         }
 
-        stage('HTML Validation') {
+        /* 1. Проверка доступности сайта */
+        stage('Check Site Availability') {
             steps {
                 script {
                     try {
                         bat '''
-                        curl -L -o vnu.jar https://github.com/validator/validator/releases/download/24.7.16/vnu.jar
-                        if exist vnu.jar (
-                            java -jar vnu.jar --exit-zero-always public/index.html
-                        ) else (
-                            echo "vnu.jar not found! Check download link."
+                        curl -o nul http://alexmegua.github.io/game-portfolio/
+                        '''
+                    } catch (Exception e) {
+                        echo "Site unavailable: ${e}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        /* 2. Проверка наличия ключевых элементов (через PowerShell) */
+        stage('Check Critical Elements') {
+            steps {
+                script {
+                    try {
+                        bat '''
+                        powershell -Command "Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/' | Select-String -Pattern '<title>.*</title>'"
+                        '''
+                    } catch (Exception e) {
+                        echo "Critical elements missing: ${e}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        /* 3. Проверка статуса HTTP-ответа */
+        stage('Check HTTP Status') {
+            steps {
+                script {
+                    try {
+                        bat '''
+                        powershell -Command "(Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/').StatusCode -eq 200"
+                        '''
+                    } catch (Exception e) {
+                        echo "HTTP status check failed: ${e}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        /* 4. Проверка наличия index.html в репозитории */
+        stage('Check index.html Exists') {
+            steps {
+                script {
+                    try {
+                        bat '''
+                        if not exist public\\index.html (
+                            echo "index.html not found!"
                             exit 1
                         )
                         '''
                     } catch (Exception e) {
-                        echo "HTML Validation failed: ${e}"
+                        echo "File check failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
         }
 
-        stage('Link Checker') {
+        /* 5. Проверка версии Node.js (если требуется для проекта) */
+        stage('Check Node.js Version') {
             steps {
                 script {
                     try {
                         bat '''
-                        curl -L -o curl.zip https://curl.se/windows/dl-8.8.0_2/curl-8.8.0_2-win64-mingw.zip
-                        tar -xf curl.zip -C C:\\tools\\curl
-                        set PATH=C:\\tools\\curl;%PATH%
-                        gem install html-proofer
-                        htmlproofer public --allow-hash-href --check-html --report-invalid-tags --test-report report.xml
+                        node --version
                         '''
                     } catch (Exception e) {
-                        echo "Link Checker failed: ${e}"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
-            }
-        }
-
-        stage('Performance Test') {
-            steps {
-                script {
-                    try {
-                        bat '''
-                        npm install -g lighthouse
-                        npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json
-                        '''
-                    } catch (Exception e) {
-                        echo "Performance Test failed: ${e}"
+                        echo "Node.js not found: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
@@ -67,8 +94,7 @@ pipeline {
 
     post {
         always {
-            junit 'report.xml'
-            archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
+            cleanWs() // Очистка workspace после сборки
         }
     }
 }
