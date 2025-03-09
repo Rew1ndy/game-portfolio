@@ -8,45 +8,36 @@ pipeline {
             }
         }
 
-        /* 1. Проверка доступности сайта */
+        /* 1. Проверка доступности сайта через curl */
         stage('Check Site Availability') {
             steps {
-                script {
-                    try {
-                        bat '''
-                        curl -o nul http://alexmegua.github.io/game-portfolio/
-                        '''
-                    } catch (Exception e) {
-                        echo "Site unavailable: ${e}"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
+                bat 'curl -o nul --fail http://alexmegua.github.io/game-portfolio/'
             }
         }
 
-        /* 2. Проверка наличия ключевых элементов (через PowerShell) */
-        stage('Check Critical Elements') {
+        /* 2. Проверка тега <title> через PowerShell без IE */
+        stage('Check Title Tag') {
             steps {
                 script {
                     try {
                         bat '''
-                        powershell -Command "Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/' | Select-String -Pattern '<title>.*</title>'"
+                        powershell -Command "Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/' -UseBasicParsing | Select-String -Pattern '<title>.*</title>'"
                         '''
                     } catch (Exception e) {
-                        echo "Critical elements missing: ${e}"
+                        echo "Title tag check failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
         }
 
-        /* 3. Проверка статуса HTTP-ответа */
+        /* 3. Проверка HTTP-статуса через curl */
         stage('Check HTTP Status') {
             steps {
                 script {
                     try {
                         bat '''
-                        powershell -Command "(Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/').StatusCode -eq 200"
+                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/ | findstr 200
                         '''
                     } catch (Exception e) {
                         echo "HTTP status check failed: ${e}"
@@ -56,35 +47,24 @@ pipeline {
             }
         }
 
-        /* 4. Проверка наличия index.html в репозитории */
-        stage('Check index.html Exists') {
+        /* 4. Проверка наличия index.html */
+        stage('Check index.html') {
             steps {
-                script {
-                    try {
-                        bat '''
-                        if not exist public\\index.html (
-                            echo "index.html not found!"
-                            exit 1
-                        )
-                        '''
-                    } catch (Exception e) {
-                        echo "File check failed: ${e}"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
+                bat 'if not exist public\\index.html (echo "File not found" & exit 1)'
             }
         }
 
-        /* 5. Проверка версии Node.js (если требуется для проекта) */
-        stage('Check Node.js Version') {
+        /* 5. Тест производительности через Lighthouse (исправленный запуск) */
+        stage('Performance Test') {
             steps {
                 script {
                     try {
                         bat '''
-                        node --version
+                        npm install -g lighthouse
+                        npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json
                         '''
                     } catch (Exception e) {
-                        echo "Node.js not found: ${e}"
+                        echo "Performance Test failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
@@ -94,7 +74,9 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Очистка workspace после сборки
+            junit 'report.xml' // Для html-proofer (если будет использоваться)
+            archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
+            cleanWs() // Очистка workspace
         }
     }
 }
