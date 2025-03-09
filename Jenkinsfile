@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/alexmegua/game-portfolio.git'
+                // Указываем ваш репозиторий и ветку
+                git branch: 'Rew1ndy-patch-1', url: 'https://github.com/Rew1ndy/game-portfolio.git'
             }
         }
 
@@ -12,6 +13,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        // Используем bat вместо sh, исправляем путь к файлу
                         bat '''
                         curl -L -o vnu.jar https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
                         java -jar vnu.jar --exit-zero-always index.html
@@ -28,6 +30,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        // Устанавливаем html-proofer (Ruby)
                         bat 'gem install html-proofer'
                         bat 'htmlproofer . --allow-hash-href --check-html --report-invalid-tags'
                     } catch (Exception e) {
@@ -42,6 +45,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        // Устанавливаем Lighthouse (Node.js)
                         bat 'npm install -g lighthouse'
                         bat 'lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json'
                     } catch (Exception e) {
@@ -55,6 +59,7 @@ pipeline {
 
     post {
         always {
+            // Исправляем путь к JUnit-отчетам (если есть)
             junit 'test-results/*.xml'
             archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
         }
