@@ -13,11 +13,11 @@ pipeline {
                 script {
                     try {
                         bat '''
-                        curl -L -o vnu.jar https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
+                        curl -L -o vnu.jar https://github.com/validator/validator/releases/download/24.7.16/vnu.jar
                         if exist vnu.jar (
-                            java -jar vnu.jar --exit-zero-always public/index.html  // Исправлен путь
+                            java -jar vnu.jar --exit-zero-always public/index.html
                         ) else (
-                            echo "vnu.jar not found!"
+                            echo "vnu.jar not found! Check download link."
                             exit 1
                         )
                         '''
@@ -33,8 +33,13 @@ pipeline {
             steps {
                 script {
                     try {
-                        bat 'gem install html-proofer'
-                        bat 'htmlproofer public --allow-hash-href --check-html --report-invalid-tags --test-report report.xml'
+                        bat '''
+                        curl -L -o curl.zip https://curl.se/windows/dl-8.8.0_2/curl-8.8.0_2-win64-mingw.zip
+                        tar -xf curl.zip -C C:\\tools\\curl
+                        set PATH=C:\\tools\\curl;%PATH%
+                        gem install html-proofer
+                        htmlproofer public --allow-hash-href --check-html --report-invalid-tags --test-report report.xml
+                        '''
                     } catch (Exception e) {
                         echo "Link Checker failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
@@ -47,8 +52,10 @@ pipeline {
             steps {
                 script {
                     try {
-                        bat 'npm install -g lighthouse'
-                        bat 'lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json'
+                        bat '''
+                        npm install -g lighthouse
+                        npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json
+                        '''
                     } catch (Exception e) {
                         echo "Performance Test failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
@@ -60,7 +67,7 @@ pipeline {
 
     post {
         always {
-            junit 'report.xml'  // Отчет от html-proofer
+            junit 'report.xml'
             archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
         }
     }
