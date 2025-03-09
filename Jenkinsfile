@@ -60,7 +60,7 @@ pipeline {
                     try {
                         bat '''
                         npm install
-                        npm test
+                        npm test --ci --runInBand
                         '''
                     } catch (Exception e) {
                         echo "Tests failed: ${e}"
@@ -77,7 +77,7 @@ pipeline {
                         bat '''
                         npm cache clean --force
                         npm install -g lighthouse
-                        npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json
+                        npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=reports/lighthouse-report.json
                         '''
                     } catch (Exception e) {
                         echo "Performance Test failed: ${e}"
@@ -93,10 +93,12 @@ pipeline {
             script {
                 bat 'dir /s /b > files.txt'
                 archiveArtifacts 'files.txt'
-                bat 'if exist report.xml (echo "Report found!") else (echo "Report not found!")'
+                bat 'if exist reports/report.xml (echo "Report found!") else (echo "Report not found!")'
             }
-            junit allowEmptyResults: true, testResults: '**/report.xml'
-            archiveArtifacts artifacts: '**/lighthouse-report.json', allowEmptyArchive: true
+            junit allowEmptyResults: true, testResults: '**/reports/report.xml'
+            archiveArtifacts artifacts: '**/reports/lighthouse-report.json', allowEmptyArchive: true
+        }
+        cleanup {
             cleanWs()
         }
     }
