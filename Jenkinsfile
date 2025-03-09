@@ -54,6 +54,22 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    try {
+                        bat '''
+                        npm install
+                        npm test
+                        '''
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
         stage('Performance Test') {
             steps {
                 script {
@@ -75,6 +91,8 @@ pipeline {
     post {
         always {
             script {
+                bat 'dir /s /b > files.txt'
+                archiveArtifacts 'files.txt'
                 bat 'if exist report.xml (echo "Report found!") else (echo "Report not found!")'
             }
             junit allowEmptyResults: true, testResults: '**/report.xml'
