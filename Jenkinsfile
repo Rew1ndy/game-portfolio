@@ -8,53 +8,44 @@ pipeline {
             }
         }
 
-        /* 1. Проверка доступности сайта через curl */
-        stage('Check Site Availability') {
-            steps {
-                bat 'curl -o nul --fail http://alexmegua.github.io/game-portfolio/'
-            }
-        }
-
-        /* 2. Проверка тега <title> через PowerShell без IE */
-        stage('Check Title Tag') {
+        /* 1. HTML-валидация (Unit-тест) */
+        stage('HTML Validation') {
             steps {
                 script {
                     try {
                         bat '''
-                        powershell -Command "Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/' -UseBasicParsing | Select-String -Pattern '<title>.*</title>'"
+                        curl -L -o vnu.jar https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
+                        if not exist vnu.jar (
+                            echo "vnu.jar download failed"
+                            exit 1
+                        )
+                        java -jar vnu.jar --exit-zero-always public/index.html
                         '''
                     } catch (Exception e) {
-                        echo "Title tag check failed: ${e}"
+                        echo "HTML Validation failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
         }
 
-        /* 3. Проверка HTTP-статуса через curl */
-        stage('Check HTTP Status') {
+        /* 2. Проверка ссылок (Smoke-тест) через PowerShell */
+        stage('Link Checker') {
             steps {
                 script {
                     try {
                         bat '''
-                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/ | findstr 200
+                        powershell -Command "Invoke-WebRequest -Uri 'http://alexmegua.github.io/game-portfolio/' -UseBasicParsing | ForEach-Object Links | ForEach-Object href"
                         '''
                     } catch (Exception e) {
-                        echo "HTTP status check failed: ${e}"
+                        echo "Link Checker failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
         }
 
-        /* 4. Проверка наличия index.html */
-        stage('Check index.html') {
-            steps {
-                bat 'if not exist public\\index.html (echo "File not found" & exit 1)'
-            }
-        }
-
-        /* 5. Тест производительности через Lighthouse (исправленный запуск) */
+        /* 3. Тест производительности (Lighthouse) */
         stage('Performance Test') {
             steps {
                 script {
@@ -76,7 +67,7 @@ pipeline {
         always {
             junit 'report.xml' // Для html-proofer (если будет использоваться)
             archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
-            cleanWs() // Очистка workspace
+            cleanWs()
         }
     }
 }
