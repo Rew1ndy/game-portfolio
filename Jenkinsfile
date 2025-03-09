@@ -35,8 +35,7 @@ pipeline {
                     try {
                         bat '''
                         echo Checking HTTP status...
-                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/
-                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/ | findstr /c:"200"
+                        curl -s -o nul -w "%%{http_code}" -L http://alexmegua.github.io/game-portfolio/ | findstr /c:"200"
                         '''
                     } catch (Exception e) {
                         echo "HTTP status check failed: ${e}"
@@ -78,8 +77,8 @@ pipeline {
             script {
                 bat 'if exist report.xml (echo "Report found!") else (echo "Report not found!")'
             }
-            junit allowEmptyResults: true, testResults: 'report.xml'
-            archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
+            junit allowEmptyResults: true, testResults: '**/report.xml'
+            archiveArtifacts artifacts: '**/lighthouse-report.json', allowEmptyArchive: true
             cleanWs()
         }
     }
