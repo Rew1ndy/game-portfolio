@@ -12,13 +12,13 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh '''
-                        wget https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
-                        java -jar vnu.jar --exit-zero-always ./index.html
+                        bat '''
+                        curl -L -o vnu.jar https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
+                        java -jar vnu.jar --exit-zero-always index.html
                         '''
                     } catch (Exception e) {
                         echo "HTML Validation failed: ${e}"
-                        currentBuild.result = 'UNSTABLE' // Помечаем сборку как "нестабильная"
+                        currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
@@ -28,8 +28,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'gem install html-proofer'
-                        sh 'htmlproofer ./ --allow-hash-href --check-html --report-invalid-tags'
+                        bat 'gem install html-proofer'
+                        bat 'htmlproofer . --allow-hash-href --check-html --report-invalid-tags'
                     } catch (Exception e) {
                         echo "Link Checker failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
@@ -42,8 +42,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'npm install -g lighthouse'
-                        sh 'lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=./lighthouse-report.json'
+                        bat 'npm install -g lighthouse'
+                        bat 'lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json'
                     } catch (Exception e) {
                         echo "Performance Test failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
