@@ -15,7 +15,7 @@ pipeline {
                         bat '''
                         curl -L -o vnu.jar https://github.com/validator/validator/releases/download/23.6.24/vnu.jar
                         if exist vnu.jar (
-                            java -jar vnu.jar --exit-zero-always index.html
+                            java -jar vnu.jar --exit-zero-always public/index.html  // Исправлен путь
                         ) else (
                             echo "vnu.jar not found!"
                             exit 1
@@ -34,7 +34,7 @@ pipeline {
                 script {
                     try {
                         bat 'gem install html-proofer'
-                        bat 'htmlproofer . --allow-hash-href --check-html --report-invalid-tags --test-report report.xml'
+                        bat 'htmlproofer public --allow-hash-href --check-html --report-invalid-tags --test-report report.xml'
                     } catch (Exception e) {
                         echo "Link Checker failed: ${e}"
                         currentBuild.result = 'UNSTABLE'
@@ -48,7 +48,6 @@ pipeline {
                 script {
                     try {
                         bat 'npm install -g lighthouse'
-                        bat 'where lighthouse'
                         bat 'lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json'
                     } catch (Exception e) {
                         echo "Performance Test failed: ${e}"
@@ -61,7 +60,7 @@ pipeline {
 
     post {
         always {
-            junit 'report.xml'
+            junit 'report.xml'  // Отчет от html-proofer
             archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
         }
     }
