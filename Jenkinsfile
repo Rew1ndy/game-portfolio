@@ -8,14 +8,12 @@ pipeline {
             }
         }
 
-        /* 1. Проверка доступности сайта через curl */
         stage('Check Site Availability') {
             steps {
                 bat 'curl -o nul --fail http://alexmegua.github.io/game-portfolio/'
             }
         }
 
-        /* 2. Проверка тега <title> через PowerShell без IE */
         stage('Check Title Tag') {
             steps {
                 script {
@@ -31,13 +29,14 @@ pipeline {
             }
         }
 
-        /* 3. Проверка HTTP-статуса через curl */
         stage('Check HTTP Status') {
             steps {
                 script {
                     try {
                         bat '''
-                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/ | findstr 200
+                        echo Checking HTTP status...
+                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/
+                        curl -s -o nul -w "%%{http_code}" http://alexmegua.github.io/game-portfolio/ | findstr /c:"200"
                         '''
                     } catch (Exception e) {
                         echo "HTTP status check failed: ${e}"
@@ -47,19 +46,21 @@ pipeline {
             }
         }
 
-        /* 4. Проверка наличия index.html */
         stage('Check index.html') {
             steps {
-                bat 'if not exist public\\index.html (echo "File not found" & exit 1)'
+                script {
+                    bat 'dir /s /b'
+                    bat 'if not exist public\\index.html (echo "File not found" & exit 1)'
+                }
             }
         }
 
-        /* 5. Тест производительности через Lighthouse (исправленный запуск) */
         stage('Performance Test') {
             steps {
                 script {
                     try {
                         bat '''
+                        npm cache clean --force
                         npm install -g lighthouse
                         npx lighthouse http://alexmegua.github.io/game-portfolio/ --output=json --output-path=lighthouse-report.json
                         '''
@@ -74,9 +75,12 @@ pipeline {
 
     post {
         always {
-            junit 'report.xml' // Для html-proofer (если будет использоваться)
+            script {
+                bat 'if exist report.xml (echo "Report found!") else (echo "Report not found!")'
+            }
+            junit allowEmptyResults: true, testResults: 'report.xml'
             archiveArtifacts artifacts: 'lighthouse-report.json', allowEmptyArchive: true
-            cleanWs() // Очистка workspace
+            cleanWs()
         }
     }
 }
